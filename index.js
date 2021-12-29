@@ -70,6 +70,14 @@ async function run() {
       res.json({ admin: isAdmin });
     });
 
+    // GET API to get single uer via email for update
+    app.get("/users/userEmail/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      res.json(user);
+    });
+
     // GET API to get all order requests
     app.get("/orderRequest", async (req, res) => {
       const cursor = orderRequestCollection.find({});
@@ -172,7 +180,7 @@ async function run() {
       res.json(result);
     });
 
-    //PUT API for update user
+    //PUT API for update user....for register operation
     app.put("/users", async (req, res) => {
       const user = req.body;
       const filter = { email: user.email };
@@ -192,6 +200,60 @@ async function run() {
       const filter = { email: user.email };
       const updateDoc = { $set: { role: "admin" } };
       const result = await usersCollection.updateOne(filter, updateDoc);
+      res.json(result);
+    });
+    //PUT API for update user info  by email
+    app.put("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const updatedUser = req.body;
+      const filter = { email: updatedUser.email };
+      const options = { upsert: true };
+      const updateProDoc = {
+        $set: {
+          email: updatedUser.email,
+          displayName: updatedUser.displayName,
+          photoURL: updatedUser.photoURL,
+          phoneNumber: updatedUser.phoneNumber,
+          address: updatedUser.address,
+          city: updatedUser.city,
+          country: updatedUser.country,
+        },
+      };
+      const result = await usersCollection.updateOne(
+        filter,
+        updateProDoc,
+        options
+      );
+      res.json(result);
+    });
+    //PUT API for update product info  by id
+    app.put("/products/:id", async (req, res) => {
+      const uId = req.params.id;
+      const updatedProduct = req.body;
+      const filter = { _id: ObjectId(uId) };
+      const options = { upsert: true };
+      const updateProDoc = {
+        $set: {
+          name: updatedProduct.name,
+          img: updatedProduct.img,
+          soldBy: updatedProduct.soldBy,
+          stock: updatedProduct.stock,
+          brand: updatedProduct.brand,
+          display: updatedProduct.display,
+          cpu: updatedProduct.cpu,
+          memory: updatedProduct.memory,
+          rear_camera: updatedProduct.rear_camera,
+          front_camera: updatedProduct.front_camera,
+          price: updatedProduct.price,
+          color: updatedProduct.color,
+          ratings: updatedProduct.ratings,
+        },
+      };
+      const result = await productsCollections.updateOne(
+        filter,
+        updateProDoc,
+        options
+      );
       res.json(result);
     });
 
