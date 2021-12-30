@@ -85,14 +85,6 @@ async function run() {
       res.json(orders);
     });
 
-    // GET API to get single order request using email
-    app.get("/orderRequest/:email", async (req, res) => {
-      const userEmail = req.params.email;
-      const query = { email: userEmail };
-      const orders = orderRequestCollection.find(query);
-      const result = await orders.toArray();
-      res.json(result);
-    });
     // GET API to get single order request using id
     app.get("/orderRequest/orderId/:id", async (req, res) => {
       const id = req.params.id;
